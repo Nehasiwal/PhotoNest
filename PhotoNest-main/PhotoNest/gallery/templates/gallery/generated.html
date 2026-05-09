@@ -1,0 +1,29 @@
+{% extends 'gallery/base.html' %}
+
+{% block title %}
+  Generated Images
+{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h2>Generated Images</h2>
+    <p class="page-subtitle">AI-generated images based on your searches</p>
+  </div>
+
+  <div class="image-grid">
+    {% for img in images %}
+      <a href="{% url 'generated_detail' img.id %}" class="image-card-link">
+        <div class="image-card gen-card" style="background-image:url('{{ img.image.url }}');">
+          <span class="ai-badge">AI</span>
+          <div class="gen-overlay"></div>
+
+          <div class="gen-title">{{ img.title|default:'Untitled' }}</div>
+        </div>
+      </a>
+    {% empty %}
+      <div class="empty-state">
+        <p>No generated images yet</p>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}

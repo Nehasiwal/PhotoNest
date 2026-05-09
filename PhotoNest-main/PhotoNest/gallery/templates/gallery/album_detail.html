@@ -1,0 +1,63 @@
+{% extends 'gallery/base.html' %}
+
+{% block title %}
+  {{ album.name }} | PhotoNest
+{% endblock %}
+
+{% block content %}
+  <div class="album-detail-wrap">
+    <!-- HEADER -->
+    <div class="album-header">
+      <div class="album-header-left">
+        <h2>{{ album.name }}</h2>
+        <p class="album-meta">{{ album.description|default:'No description' }}</p>
+      </div>
+
+      <div class="album-header-right">
+        <button onclick="openAlbumModal({{ album.id }})" class="btn btn-primary">+ Add Images</button>
+      </div>
+    </div>
+
+    <!-- COUNT -->
+    <div class="album-subhead">
+      <h3>Photos ({{ album.images.count }})</h3>
+    </div>
+
+    <!-- GRID -->
+    <div class="image-grid">
+      {% for img in images %}
+        {% if img.image %}
+          <a href="{% url 'image_detail' img.id %}" class="image-card-link">
+            <div class="image-card" id="img-{{ img.id }}" style="background-image:url('{{ img.image.url }}');">
+              <!-- ACTIONS -->
+              <div class="card-actions">
+                <!-- REMOVE -->
+                <button class="select-btn remove-btn" title="Remove from Album" onclick="removeFromAlbum({{ album.id }}, {{ img.id }}, this); event.stopPropagation();">❌</button>
+
+                <!-- FAVORITE -->
+                <form method="post" action="{% url 'toggle_favorite' img.id %}" style="display:inline;" onclick="event.stopPropagation();">
+                  {% csrf_token %}
+                  <button type="submit" class="fav-btn">
+                    {% if img.favorite %}
+                      <span style="color:gold;">★</span>
+                    {% else %}
+                      ★
+                    {% endif %}
+                  </button>
+                </form>
+
+                <!-- SELECT -->
+                <button class="select-btn" onclick="showImageMenu({{ img.id }}); event.stopPropagation();">✔</button>
+              </div>
+            </div>
+          </a>
+        {% endif %}
+      {% empty %}
+        <div class="empty-state">
+          <p>No images in this album yet</p>
+          <button onclick="openAlbumModal({{ album.id }})" class="btn btn-primary">Add your first image</button>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}
